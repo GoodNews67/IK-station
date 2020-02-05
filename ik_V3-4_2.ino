@@ -325,7 +325,8 @@ void setup()
   // подождите, пока чипы MAX будут стабилизироваться и закрасить экран
   //delay(50);
   {
-  //Мелодия приветствия Марио
+  //Мелодия приветствия
+  //Марио
   tone(buzzerPin,1318,150);
   delay(150);
   tone(buzzerPin,1318,300);
@@ -339,8 +340,8 @@ void setup()
   tone(buzzerPin,1568,600);
   delay(600);
   tone(buzzerPin,784,600);
-  delay(600);
-  noTone(buzzerPin); 
+  delay(600); 
+
   }
   myGLCD.clrScr();
   
@@ -1042,13 +1043,13 @@ void loop()
         ms_button =  millis();
         button_state = false;
         updateScreen = true;
-        if (editStep + 1 == profileSteps) {
-          editStep = 0;
+      /*  if (editStep + 1 == profileSteps) {
+          editStep = 0;*/
           reflowState = REFLOW_STATE_MENU_STEP_TARGET;
-        }
+       /* }
         else {
           editStep++;
-        }
+        } */
         for (int i = 0; i < 3; i + 1) {
           EEPROM.write(((currentProfile - 1) * 29 + i + 2), rampRateStep[i]);
           i++;
@@ -1120,13 +1121,13 @@ void loop()
         ms_button =  millis();
         button_state = false;
         updateScreen = true;
-        if (editStep + 1 == profileSteps) {
-          editStep = 0;
+     /*   if (editStep + 1 == profileSteps) {
+          editStep = 0; */
           reflowState = REFLOW_STATE_MENU_TOP_PWR_MIN;
-        }
+      /*  }
         else {
           editStep++;
-        }
+        } */
         for (int i = 0; i < 3; i + 1) {
           EEPROM.write(((currentProfile - 1) * 29 + i + 8), temperatureStep[i]);
           i++;
@@ -1193,13 +1194,13 @@ void loop()
         ms_button =  millis();
         button_state = false;
         updateScreen = true;
-        if (editStep + 1 == profileSteps) {
-        editStep = 0;
+     /*   if (editStep + 1 == profileSteps) {
+        editStep = 0;*/
         reflowState = REFLOW_STATE_MENU_TOP_PWR_MAX;
-        }
+       /* }
         else {
           editStep++;
-        }
+        }*/
         for (int i = 0; i < 3; i + 1) {
           EEPROM.write(((currentProfile - 1) * 29 + i + 11), min_pwr_TOPStep[i]);
           i++;
@@ -1267,13 +1268,13 @@ void loop()
         ms_button =  millis();
         button_state = false;
         updateScreen = true;
-        if (editStep + 1 == profileSteps) {
-        editStep = 0;
+     /*   if (editStep + 1 == profileSteps) {
+        editStep = 0;*/
         reflowState = REFLOW_STATE_MENU_STEP_DWELL;
-        }
+       /* }
         else {
           editStep++;
-        }
+        }*/
         for (int i = 0; i < 3; i + 1) {
           EEPROM.write(((currentProfile - 1) * 29 + i + 14), max_pwr_TOPStep[i]);
           i++;
@@ -1350,6 +1351,7 @@ void loop()
         }
         else {
           editStep++;
+          reflowState = REFLOW_STATE_MENU_STEP_RAMP;
         }
       }
       if (cancelSwitchState == HIGH && ( millis() - ms_button)>60)
