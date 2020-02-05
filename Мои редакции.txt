@@ -1,0 +1,108 @@
+1) Кнопки занчения сопротивлений
+   A_PIN_DESC expected_values[]={ // ожидаемые значения для псевдо-кнопок
+   { PIN_RIGHT,0},
+   { PIN_UP,1},
+   { PIN_DOWN,152},
+   { PIN_LEFT,349},
+   { PIN_SELECT,514}
+   };
+
+2) Меню и музыка
+  // myGLCD.clrScr();
+  myGLCD.setFont(BigFont);
+  myGLCD.setColor(255-(i*i/2), 255-(i*i/2), 255-(i*i/2));
+  myGLCD.print("*----------------------*",CENTER, 40+i*2);
+  myGLCD.setColor(255-(i*i/2),255-(i*i/2),000);
+  myGLCD.print("|    edited by Krupa   |",CENTER, 70+i*2);
+  myGLCD.setColor(255-(i*i/2),255-(i*i/2),255-(i*i/2));
+  myGLCD.print("|    REWORK STATION    |",CENTER, 100+i*2);
+  myGLCD.setColor(000, 255-(i*i/2), 000);
+  myGLCD.print("|    Arduino project   |",CENTER, 130+i*2);
+  myGLCD.setColor(255-(i*i/2), 255-(i*i/2), 255-(i*i/2));
+  myGLCD.print("*----------------------*",CENTER, 160+i*2);
+  // wait for MAX chips to stabilize and splash screen
+  delay(1000);
+  }
+  //Мелодия приветствия
+  //Имперский марш
+  /*tone(buzzerPin, 392, 350);
+  delay(350);
+  tone(buzzerPin, 392, 350);
+  delay(350);
+  tone(buzzerPin, 392, 350);
+  delay(350);
+  tone(buzzerPin, 311, 250);
+  delay(250);
+  tone(buzzerPin, 466, 100);
+  delay(100);
+  tone(buzzerPin, 392, 350);
+  delay(350);
+  tone(buzzerPin, 311, 250);
+  delay(250);
+  tone(buzzerPin, 466, 100);
+  delay(100);
+  tone(buzzerPin, 392, 700);
+  delay(700);*/
+
+  //Марио
+  tone(buzzerPin,1318,150);
+  delay(150);
+  tone(buzzerPin,1318,300);
+  delay(300);
+  tone(buzzerPin,1318,150);
+  delay(300);
+  tone(buzzerPin,1046,150);
+  delay(150);
+  tone(buzzerPin,1318,300);
+  delay(300);
+  tone(buzzerPin,1568,600);
+  delay(600);
+  tone(buzzerPin,784,600);
+  delay(600); 
+
+  noTone(buzzerPin);
+  myGLCD.clrScr();
+
+3) Термопары чтоб не выключались при потери связи
+
+У меня были те же проблемы.
+Я так сделал теперь можно выключить термопару вставить обратно и будет дальше работать.
+
+	В max6675.cpp:
+
+	if (v & 0x4) {
+    	// uh oh, no thermocouple attached!
+   	 //return NAN;     //Закомментировать
+   	 return -100;        //Раскомментировать
+ 	}
+
+	В revolover_V3-4.ino:
+
+	//Добавил чтоб показатели температуры ниже 0 не опускалась    
+        if(tc1 <= 0){tc1 = 0;}
+        if(tc2 <= 0){tc2 = 0;}
+      //sprintf (buf, "OK%03d%03d%03d%03d\r\n", int(Output1), int(Output2), tc1, tc2); // БУФЕР
+        if (Input1 <= -0) { //Изменил если температура меньше нуля писать ошибку
+          myGLCD.setColor(VGA_BLACK);
+          myGLCD.drawRoundRect(340,100,460,180);
+          myGLCD.setFont(BigFont);
+          myGLCD.setColor(VGA_RED);
+          myGLCD.print("ERORR",360, 140);
+        } else {
+          myGLCD.setFont(SevenSegNumFont);
+          myGLCD.setColor(VGA_SILVER);
+          myGLCD.printNumI(tc1,345, 120,3,'0');
+        }
+        if (Input2 <= -0) { //Изменил если температура меньше нуля писать ошибку
+          myGLCD.setFont(BigFont);
+          myGLCD.setColor(VGA_RED);
+          myGLCD.print("ERORR",360, 250);
+        } else {
+          myGLCD.setFont(SevenSegNumFont);
+          myGLCD.setColor(VGA_SILVER);
+          myGLCD.printNumI(tc2,345, 232,3,'0');
+        }
+
+4) Переключение температуры верхна на следущий шаг - 2 градуса от указаного (в дух строчках )      
+      a)if (setpointRamp >= temperatureStep[currentStep - 1] - 2) //если достигли нужной температуры
+      б)if (Input1 >= temperatureStep[currentStep - 1] - 2)
